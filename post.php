@@ -17,11 +17,10 @@ switch ($method) {
 
         if (isset($_GET['post_id'])) {
             $post_id = $_GET['post_id'];
-            $user_id = $_GET['user_id'];
 
             $sql = "SELECT * FROM post 
             INNER JOIN users ON post.user_id = users.user_id 
-            WHERE post.post_id = :post_id AND users.user_id = :user_id 
+            WHERE post.post_id = :post_id
             ORDER BY post.post_id DESC";
         }
 
@@ -40,7 +39,6 @@ switch ($method) {
 
             if (isset($post_id)) {
                 $stmt->bindParam(':post_id', $post_id);
-                $stmt->bindParam(':user_id', $user_id);
             }
 
             $stmt->execute();

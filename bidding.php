@@ -12,7 +12,8 @@ switch ($method) {
 
         if (isset($_GET['post_id'])) {
             $post_id = $_GET['post_id'];
-            $sql = "SELECT bidding.created_at, bidding.bidding_comment, bidding.bidding_price FROM bidding WHERE post_id = :post_id ORDER BY bidding_id DESC";
+
+            $sql = "SELECT bidding.created_at, bidding.bidding_comment, bidding.bidding_price, users.name FROM bidding INNER JOIN users ON bidding.bidder_id = users.user_id WHERE post_id = :post_id  ORDER BY bidding_id DESC";
         }
 
 
