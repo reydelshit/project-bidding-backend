@@ -88,15 +88,26 @@ switch ($method) {
 
     case "PUT":
         $user_post = json_decode(file_get_contents('php://input'));
-        $sql = "UPDATE post SET post_context = :post_context, post_image = :post_image, post_isForSale = :post_isForSale, post_location = :post_location, post_price = :post_price WHERE post_id = :post_id";
+        $sql = "UPDATE post 
+        SET post_context = :post_context,
+            post_image = :post_image,
+            project_location = :project_location,
+            project_name = :project_name,
+            email_phone = :email_phone,
+            starting_price = :starting_price,
+            close_until = :close_until
+        WHERE post_id = :post_id";
+
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':post_id', $user_post->post_id);
         $stmt->bindParam(':post_context', $user_post->post_context);
         $stmt->bindParam(':post_image', $user_post->post_image);
-        $stmt->bindParam(':post_isForSale', $user_post->post_isForSale);
-        $stmt->bindParam(':post_location', $user_post->post_location);
-        $stmt->bindParam(':post_price', $user_post->post_price);
+        $stmt->bindParam(':project_location', $user_post->project_location);
+        $stmt->bindParam(':project_name', $user_post->project_name);
+        $stmt->bindParam(':email_phone', $user_post->email_phone);
+        $stmt->bindParam(':starting_price', $user_post->starting_price);
+        $stmt->bindParam(':close_until', $user_post->close_until);
 
         if ($stmt->execute()) {
             $response = [
