@@ -13,14 +13,7 @@ switch ($method) {
         if (isset($_GET['post_id'])) {
             $post_id = $_GET['post_id'];
 
-            $sql = "SELECT bidding.bidding_id, bidding.created_at, bidding.bidding_comment, bidding.bidding_price, users.name FROM bidding INNER JOIN users ON bidding.bidder_id = users.user_id WHERE post_id = :post_id  ORDER BY bidding_id DESC";
-        }
-
-
-
-
-        if (!isset($_GET['post_id']) && !isset($_GET['post_id'])) {
-            $sql = "SELECT * FROM post INNER JOIN users ON post.user_id = users.user_id ORDER BY post_id DESC";
+            $sql = "SELECT * FROM deal WHERE post_id = :post_id  ORDER BY deal_id DESC";
         }
 
 
@@ -43,32 +36,42 @@ switch ($method) {
 
     case "POST":
         $bid = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO bidding (bidding_price, bidding_current_price, bidder_id, post_id, bidding_comment, created_at) VALUES (:bidding_price, :bidding_current_price, :bidder_id, :post_id, :bidding_comment, :created_at)";
+        $sql = "INSERT INTO deal (deal_name, post_id, bidding_id, deal_total_price, created_at) VALUES (:deal_name, :post_id, :bidding_id, :deal_total_price, :created_at)";
         $stmt = $conn->prepare($sql);
 
         $created_at = date('Y-m-d H:i:s');
-        $stmt->bindParam(':bidder_id', $bid->bidder_id);
-        $stmt->bindParam(':bidding_price', $bid->bidding_price);
+        $stmt->bindParam(':bidding_id', $bid->bidding_id);
+        $stmt->bindParam(':deal_name', $bid->deal_name);
         $stmt->bindParam(':post_id', $bid->post_id);
-        $stmt->bindParam(':bidding_comment',  $bid->bidding_comment);
-        $stmt->bindParam(':bidding_current_price',  $bid->bidding_current_price);
+        $stmt->bindParam(':deal_total_price',  $bid->deal_total_price);
         $stmt->bindParam(':created_at',  $created_at);
 
 
         if ($stmt->execute()) {
+
+            $sql2 = "UPDATE post 
+            SET status= :status
+            WHERE post_id = :post_id";
+
+            $stmt3 = $conn->prepare($sql2);
+
+            $status = "Closed";
+
+            $stmt3->bindParam(':post_id', $bid->post_id);
+            $stmt3->bindParam(':status', $status);
+
+            $stmt3->execute();
+
             $response = [
                 "status" => "success",
-                "message" => "bidding successfully"
+                "message" => "deal successfully"
             ];
         } else {
             $response = [
                 "status" => "error",
-                "message" => "bidding failed"
+                "message" => "deal failed"
             ];
         }
-
-
-
 
         echo json_encode($response);
         break;
