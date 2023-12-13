@@ -52,10 +52,11 @@ switch ($method) {
 
     case "POST":
         $user_post = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO post (user_id, post_context, post_image, project_location, project_name, email_phone, starting_price, created_at, close_until) VALUES (:user_id, :post_context, :post_image, :project_location, :project_name, :email_phone, :starting_price, :created_at, :close_until)";
+        $sql = "INSERT INTO post (user_id, post_context, post_image, project_location, project_name, email_phone, starting_price, created_at, close_until, status) VALUES (:user_id, :post_context, :post_image, :project_location, :project_name, :email_phone, :starting_price, :created_at, :close_until, :status)";
         $stmt = $conn->prepare($sql);
 
         $created_at = date('Y-m-d H:i:s');
+        $status = "Open";
         $stmt->bindParam(':user_id', $user_post->user_id);
         $stmt->bindParam(':post_context', $user_post->post_context);
         $stmt->bindParam(':post_image', $user_post->post_image);
@@ -64,8 +65,9 @@ switch ($method) {
         $stmt->bindParam(':email_phone',  $user_post->email_phone);
         $stmt->bindParam(':starting_price',  $user_post->starting_price);
         $stmt->bindParam(':close_until',  $user_post->close_until);
-
         $stmt->bindParam(':created_at',  $created_at);
+        $stmt->bindParam(':status',  $status);
+
 
 
         if ($stmt->execute()) {
